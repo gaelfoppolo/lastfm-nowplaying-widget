@@ -131,7 +131,7 @@ class lastfm_nowplaying {
 		$track = $track + $track_arr['track'];
 		$track['playcount'] = isset($track['userplaycount']) ? ($track['userplaycount']) : "1";
 		$track['playcount'] .= ($track['playcount']=="1") ? " écoute" : " écoutes";
-		$track['duration'] = '<strong>&#9835;</strong> '.($track['duration'] ? gmdate("i:s", ($track['duration'] / 1000)) : '?');
+		$track['duration'] = '<strong>&#9835;</strong> '.($track['duration'] ? gmdate("i:s", ($track['duration'] / 1000)) : 'N/A');
 		$track['userloved'] = $track['userloved'] ? '<strong>&#x2764;</strong>' : null;
 		$toolongarr = array('artist', 'name', 'album');
 
@@ -148,11 +148,15 @@ class lastfm_nowplaying {
 
 		//formatting date
 
-		$dateFrom = date_create_from_format('j M Y, H:i', $track['date']);		
+		if (isset($track['nowplaying'])) {
 
-		$dateNow = new DateTime('now');
+			$dateFrom = date_create_from_format('j M Y, H:i', $track['date']);
 
-		$track['date'] = $this->formatDateDiff($dateFrom,$dateNow);
+			$dateNow = new DateTime('now');
+
+			$track['date'] = $this->formatDateDiff($dateFrom,$dateNow);
+
+		}	
 
 		// cleanup
 		unset($track['id']);
