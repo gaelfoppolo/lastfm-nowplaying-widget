@@ -3,14 +3,12 @@
 <html>
 <head>
 	<title><?php echo $username; ?> on last.fm</title>
-	<link rel="stylesheet" type="text/css" href="styles/last.fm.css">
-	<style type="text/css">body { background: #<?php echo $bgcolor; ?> }</style>
-	
+	<link rel="stylesheet" type="text/css" href="styles/last.fm.css">	
 </head>
 <body>
-	<div id="lastfm" class="<?php echo $size; ?> center">
+	<div id="lastfm" class="<?php echo $size; ?>">
 		<div id="topbar" class="<?php echo $color; ?>">
-			<?php echo $playing = $track['nowplaying'] ? $nowplaying : $lastplayed.$track['date']; ?> sur Last.fm
+			<img src="images/np.gif"> <?= $track['title']; ?>
 		</div>
 		<?php if(!empty($track['url'])) { ?><a target="_blank" href="<?php echo $track['url']; ?>"><?php } ?>
 
@@ -23,7 +21,7 @@
 			<album><?php echo $track['album']; ?></album>
 		</div>
 		<div id="userinfo">
-			<duration><?php echo $track['duration']; ?></duration>
+			<duration><strong>&#9835;</strong> <?php echo $track['duration']; ?></duration>
 			<playcount><?php echo $track['playcount']; ?></playcount>
 			<user><a target="_blank" href="http://www.last.fm/user/<?php echo $username; ?>"><?php echo $username; ?></a></user>
 		</div>
