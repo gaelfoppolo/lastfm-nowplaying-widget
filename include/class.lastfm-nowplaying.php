@@ -5,9 +5,9 @@
 class lastfm_nowplaying {
 
 	private $api_root = "http://ws.audioscrobbler.com/2.0/";
-	private $user_agent = 'nowplaying widget - http://www.icj.me/';
+	private $user_agent = 'nowplaying widget';
 	
-	public function __construct($api_key, $size = "medium") {
+	public function __construct($api_key, $size = "small") {
 		$this->api_key = $api_key;
 		$this->size = $size;
 
@@ -18,8 +18,8 @@ class lastfm_nowplaying {
 
 	private function is_too_long($string) {
 		
-		if($this->size == "medium") $len = 30;
-		if($this->size == "tall") $len = 25;
+		if($this->size == "small") $len = 30;
+		if($this->size == "big") $len = 25;
 		
 		// marquees if the string is too long
 		if(strlen($string) >= $len) {
@@ -42,10 +42,56 @@ class lastfm_nowplaying {
 		curl_close($ch);
 	}
 
+	public function formatDateDiff($start, $end) {
+	    if(!($start instanceof DateTime)) {
+	        $start = new DateTime($start);
+	    }
+	   
+	    if($end === null) {
+	        $end = new DateTime();
+	    }
+	   
+	    if(!($end instanceof DateTime)) {
+	        $end = new DateTime($start);
+	    }
+	   
+	    $interval = $end->diff($start);
+	    $doPlural = function($nb,$str){return $nb>1?$str.'s':$str;}; // adds plurals
+	   
+	    $format = array();
+	    if($interval->y !== 0) {
+	        $format[] = "%y ".$doPlural($interval->y, "an");
+	    }
+	    if($interval->m !== 0) {
+	        $format[] = "%m mois";
+	    }
+	    if($interval->d !== 0) {
+	        $format[] = "%d ".$doPlural($interval->d, "jour");
+	    }
+	    if($interval->h !== 0) {
+	        $format[] = "%h ".$doPlural($interval->h, "heure");
+	    }
+	    if($interval->i !== 0) {
+	        $format[] = "%i ".$doPlural($interval->i, "minute");
+	    }
+	    if($interval->s !== 0 && !count($format)) {
+	        return "moins d'une minute";
+	    }
+	   
+	    // We use the two biggest parts
+	    if(count($format) > 1) {
+	        $format = array_shift($format)." et ".array_shift($format);
+	    } else {
+	        $format = array_pop($format);
+	    }
+	   
+	    // Prepend 'since ' or whatever you like
+	    return $interval->format($format);
+	}
+
 	public function info($username) {
 
 		$recent_tracks = $this->retrieveData($this->api_root . "?format=json&method=user.getrecenttracks&user=" . $username . "&api_key=" . $this->api_key . "&limit=5");
-		
 
 		$recent_tracks = json_decode($recent_tracks, true);
 
@@ -68,7 +114,7 @@ class lastfm_nowplaying {
 		}
 
 		// make 'image' only the extra large one (that we want) and also add in the no artwork if its the case
-		$track['image'] = $track['image'][3]['#text'] ? $track['image'][3]['#text'] : 'no_artwork.png';
+		$track['image'] = $track['image'][3]['#text'] ? $track['image'][3]['#text'] : 'images/no_artwork.png';
 
 		// nowplaying info
 		$track['nowplaying'] = isset($track['@attr']['nowplaying']);
@@ -83,8 +129,9 @@ class lastfm_nowplaying {
 		}
 		$track_arr = json_decode($track_json, true);
 		$track = $track + $track_arr['track'];
-		$track['playcount'] = isset($track['userplaycount']) ? $track['userplaycount'] : 1;
-		$track['duration'] = $track['duration'] ? gmdate("i:s", ($track['duration'] / 1000)) : '?';
+		$track['playcount'] = isset($track['userplaycount']) ? ($track['userplaycount']) : "1";
+		$track['playcount'] .= ($track['playcount']=="1") ? " écoute" : " écoutes";
+		$track['duration'] = '<strong>&#9835;</strong> '.($track['duration'] ? gmdate("i:s", ($track['duration'] / 1000)) : '?');
 		$track['userloved'] = $track['userloved'] ? '<strong>&#x2764;</strong>' : null;
 		$toolongarr = array('artist', 'name', 'album');
 
@@ -99,6 +146,14 @@ class lastfm_nowplaying {
 			}
 		}
 
+		//formatting date
+
+		$dateFrom = date_create_from_format('j M Y, H:i', $track['date']);		
+
+		$dateNow = new DateTime('now');
+
+		$track['date'] = $this->formatDateDiff($dateFrom,$dateNow);
+
 		// cleanup
 		unset($track['id']);
 		unset($track['listeners']);
@@ -106,4 +161,5 @@ class lastfm_nowplaying {
 		unset($track['userplaycount']);
 		return $track;
 	}
+
 }
