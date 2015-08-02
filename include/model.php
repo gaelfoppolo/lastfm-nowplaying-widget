@@ -7,10 +7,10 @@ $api_key = "";
 
 // parse options
 $username = isset($_GET["username"]) ? $_GET["username"] : "iDrago";
-$size = isset($_GET["size"]) ? $_GET["size"] : "small";
+$size = isset($_GET["size"]) ? $_GET["size"] : "big";
 $autorefresh = isset($_GET["autorefresh"]) && ($_GET["autorefresh"] == "no") ? false : true;
 $color = isset($_GET["color"]) ? $_GET["color"] : "red";
-$nowplaying = 'En ce moment';
+$nowplaying = '<img src="images/np.gif"> En ce moment';
 $lastplayed = 'Il y a ';
 
 // headers
