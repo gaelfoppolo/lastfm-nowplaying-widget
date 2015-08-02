@@ -24,6 +24,7 @@ div#lastfm div#topbar {
   text-align: center;
   color: white;
   padding-top: 6px;
+  padding-left: 6px;
   padding-bottom: 4px;
   border-radius: 6px 6px 0px 0px;
   border-bottom: 1px solid black;
@@ -31,6 +32,9 @@ div#lastfm div#topbar {
   padding-top: 3px;
   padding-bottom: 3px;
   font-size: 0.7em;
+}
+div#lastfm div#topbar marquee {
+  max-width: 195px;
 }
 div#lastfm div#topbar.red {
   background-image: linear-gradient(bottom, #d21002 11%, #e21203 71%, #e21203 0%);
