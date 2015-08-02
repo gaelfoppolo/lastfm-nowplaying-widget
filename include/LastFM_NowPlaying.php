@@ -1,32 +1,40 @@
 <?php
 
-// nowplaying class
+/* 
+ * A Last.fm now playing widget
+ * (c) 2012 Callum Jones, 2015 Gaël Foppolo
+ * <cj@icj.me>, <me@gaelfoppolo.com>
+ */
 
-class lastfm_nowplaying {
+class LastFM_NowPlaying {
 
 	private $api_root = "http://ws.audioscrobbler.com/2.0/";
-	private $user_agent = 'nowplaying widget';
+	private $user_agent = 'Now Playing Widget';
+	private $api_key;
+	public $size;
+	public $color;
+	public $username;
 	
-	public function __construct($api_key, $size = "small") {
-		$this->api_key = $api_key;
-		$this->size = $size;
+	public function __construct($size, $color, $username, $api_key) {
 
-		if(!$this->api_key) { 
+		$this->size = $size;
+		$this->color = $color;
+		$this->username = $username;
+		$this->api_key = $api_key;
+
+		if(empty($api_key)) { 
 			throw new exception("Please set an API key."); 
 		}
 	}
 
-	private function is_too_long($string) {
-		
-		if($this->size == "small") $len = 30;
-		if($this->size == "big") $len = 25;
-		
+	private function is_too_long($string,$sizematter) {
+
+		$len = $sizematter ? (($this->size == "small") ? 30 : 25) : 32;
+
 		// marquees if the string is too long
-		if(strlen($string) >= $len) {
-			return '<marquee direction="left" behavior="scroll" scroll="on" scrollamount="3">' . $string . '</marquee>';
-		} else {
-			return $string;
-		}
+
+		return (strlen($string) >= $len) ? '<marquee direction="left" behavior="scroll" scroll="on" scrollamount="3">' . $string . '</marquee>' : $string;
+
 	}
 
 	private function retrieveData($url) {
@@ -89,9 +97,9 @@ class lastfm_nowplaying {
 	    return $interval->format($format);
 	}
 
-	public function info($username) {
+	public function info() {
 
-		$recent_tracks = $this->retrieveData($this->api_root . "?format=json&method=user.getrecenttracks&user=" . $username . "&api_key=" . $this->api_key . "&limit=5");
+		$recent_tracks = $this->retrieveData($this->api_root . "?format=json&method=user.getrecenttracks&user=" . $this->username . "&api_key=" . $this->api_key . "&limit=5");
 
 		$recent_tracks = json_decode($recent_tracks, true);
 
@@ -122,17 +130,17 @@ class lastfm_nowplaying {
 
 		if($track['mbid']) {
 			// load the information from the track api call using mbid
-			$track_json = $this->retrieveData($this->api_root . "?format=json&method=track.getInfo&username=" . $username . "&api_key=" . $this->api_key . "&mbid=" . urlencode($track['mbid']) /*. "&autocorrect=1"*/);
+			$track_json = $this->retrieveData($this->api_root . "?format=json&method=track.getInfo&username=" . $this->username . "&api_key=" . $this->api_key . "&mbid=" . urlencode($track['mbid']) /*. "&autocorrect=1"*/);
 		} else {
 			// if no mbid, try the album+artist
-			$track_json = $this->retrieveData($this->api_root . "?format=json&method=track.getInfo&username=" . $username . "&api_key=" . $this->api_key . "&artist=" . urlencode($track['artist']) . "&track=" . urlencode($track['name']) . "&autocorrect=1");
+			$track_json = $this->retrieveData($this->api_root . "?format=json&method=track.getInfo&username=" . $this->username . "&api_key=" . $this->api_key . "&artist=" . urlencode($track['artist']) . "&track=" . urlencode($track['name']) . "&autocorrect=1");
 		}
 		$track_arr = json_decode($track_json, true);
 		$track = $track + $track_arr['track'];
 		$track['playcount'] = isset($track['userplaycount']) ? ($track['userplaycount']) : "1";
 		$track['playcount'] .= ($track['playcount']=="1") ? " écoute" : " écoutes";
-		$track['duration'] = '<strong>&#9835;</strong> '.($track['duration'] ? gmdate("i:s", ($track['duration'] / 1000)) : 'N/A');
-		$track['userloved'] = $track['userloved'] ? '<strong>&#x2764;</strong>' : null;
+		$track['duration'] = ($track['duration'] ? gmdate("i:s", ($track['duration'] / 1000)) : 'N/A');
+		$track['userloved'] = $track['userloved'] ? '&#x2764;' : null;
 		$toolongarr = array('artist', 'name', 'album');
 
 		foreach($track as $key => $value) {
@@ -141,14 +149,14 @@ class lastfm_nowplaying {
 				if(strlen($value) == 0) {
 					$track[$key] = "Unknown $key";
 				} else { // if its not there, we don't need to check if it's too long...
-					$track[$key] = $this->is_too_long($value);
+					$track[$key] = $this->is_too_long($value, true);
 				}
 			}
 		}
 
 		//formatting date
 
-		if (isset($track['nowplaying'])) {
+		if (!$track['nowplaying']) {
 
 			$dateFrom = date_create_from_format('j M Y, H:i', $track['date']);
 
@@ -156,7 +164,10 @@ class lastfm_nowplaying {
 
 			$track['date'] = $this->formatDateDiff($dateFrom,$dateNow);
 
-		}	
+		}
+
+		$track['title'] = ($track['nowplaying'] ? 'En ce moment' : 'Il y a '.$track['date']).' sur Last.fm';	
+		$track['title'] = $this->is_too_long($track['title'],false);
 
 		// cleanup
 		unset($track['id']);
