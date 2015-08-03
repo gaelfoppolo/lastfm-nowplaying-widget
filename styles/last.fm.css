@@ -87,7 +87,7 @@ div#lastfm div#songinfo album {
 div#lastfm div#songinfo song {
   font-weight: bold;
 }
-div#lastfm div#songinfo span.loved {
+div#lastfm div#songinfo loved {
   color: red;
 }
 
