@@ -89,6 +89,7 @@ div#lastfm div#songinfo song {
 }
 div#lastfm div#songinfo loved {
   color: red;
+  font-size: 1.2em;
 }
 
 /* Big style */
@@ -186,7 +187,7 @@ div#lastfm.big div#userinfo user {
 
 div#lastfm.small {
   display: block;
-  width: 240px;
+  width: 220px;
   height: 105px;
 }
 div#lastfm.small img#artwork {
@@ -202,8 +203,8 @@ div#lastfm.small img#artwork:after {
   font-size: 0.6em;
 }
 div#lastfm.small div#songinfo {
-  font-size: 0.65em;
-  width: 155px;
+  font-size: 0.6em;
+  width: 135px;
   display: inline-block;
   position: relative;
   top: 5px;
@@ -224,10 +225,14 @@ div#lastfm.small div#songinfo song,
 div#lastfm.small div#songinfo album {
   display: block;
   line-height: 1.5em;
-  width: 155px;
+  max-width: 130px;
 }
 div#lastfm.small div#songinfo song {
   font-weight: bold;
+}
+div#lastfm.small div#songinfo name {
+  display: inline-block;
+  max-width: 120px;
 }
 div#lastfm.small marquee {
   line-height: 1.5em;
@@ -237,9 +242,9 @@ div#lastfm.small div#userinfo {
   color: grey;
   position: relative;
   float: left;
-  left: 15px;
+  left: 10px;
   top: 22px;
-  width: 150px;
+  width: 135px;
   text-align: left;
   text-shadow: none;
 
