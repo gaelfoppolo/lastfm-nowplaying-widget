@@ -12,10 +12,10 @@ class LastFM_NowPlaying {
 	private $user_agent = 'Now Playing Widget';
 	private $api_key;
 	public $size;
-	public $color;
 	public $username;
+	public $color;
 	
-	public function __construct($size, $color, $username, $api_key) {
+	public function __construct($size, $color ,$username, $api_key) {
 
 		$this->size = $size;
 		$this->color = $color;
@@ -24,6 +24,8 @@ class LastFM_NowPlaying {
 
 		if(empty($api_key)) { 
 			throw new exception("Please set an API key."); 
+		} else if(empty($username)) { 
+			throw new exception("Please set an username."); 
 		}
 	}
 
@@ -168,6 +170,10 @@ class LastFM_NowPlaying {
 
 		$track['title'] = ($track['nowplaying'] ? 'En ce moment' : 'Il y a '.$track['date']).' sur Last.fm';	
 		$track['title'] = $this->is_too_long($track['title'],false);
+
+		$track['color'] = $this->color;
+		$track['size'] = $this->size;
+		$track['username'] = $this->username;
 
 		// cleanup
 		unset($track['id']);
