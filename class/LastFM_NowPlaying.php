@@ -11,14 +11,10 @@ class LastFM_NowPlaying {
 	private $api_root = "http://ws.audioscrobbler.com/2.0/";
 	private $user_agent = 'Now Playing Widget';
 	private $api_key;
-	public $size;
 	public $username;
-	public $color;
 	
-	public function __construct($size, $color ,$username, $api_key) {
+	public function __construct($username, $api_key) {
 
-		$this->size = $size;
-		$this->color = $color;
 		$this->username = $username;
 		$this->api_key = $api_key;
 
@@ -27,16 +23,6 @@ class LastFM_NowPlaying {
 		} else if(empty($username)) { 
 			throw new exception("Please set an username."); 
 		}
-	}
-
-	private function is_too_long($string,$sizematter) {
-
-		$len = $sizematter ? (($this->size == "small") ? 30 : 25) : 32;
-
-		// marquees if the string is too long
-
-		return (strlen($string) >= $len) ? '<marquee direction="left" behavior="scroll" scroll="on" scrollamount="3">' . $string . '</marquee>' : $string;
-
 	}
 
 	private function retrieveData($url) {
@@ -147,12 +133,8 @@ class LastFM_NowPlaying {
 
 		foreach($track as $key => $value) {
 			if(in_array($key, $toolongarr)) {
-				// do we know the values?
-				if(strlen($value) == 0) {
-					$track[$key] = "Unknown $key";
-				} else { // if its not there, we don't need to check if it's too long...
-					$track[$key] = $this->is_too_long($value, true);
-				}
+				// do we know the values ? if not unknown
+				$track[$key] = (strlen($value) == 0) ? "Unknown $key" : $value;
 			}
 		}
 
@@ -169,10 +151,7 @@ class LastFM_NowPlaying {
 		}
 
 		$track['title'] = ($track['nowplaying'] ? 'En ce moment' : 'Il y a '.$track['date']).' sur Last.fm';	
-		$track['title'] = $this->is_too_long($track['title'],false);
 
-		$track['color'] = $this->color;
-		$track['size'] = $this->size;
 		$track['username'] = $this->username;
 
 		// cleanup
