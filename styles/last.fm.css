@@ -89,7 +89,14 @@ div#lastfm div#songinfo song {
 }
 div#lastfm div#songinfo loved {
   color: red;
-  font-size: 1.2em;
+}
+div#lastfm div#topbar img#nowplaying,
+div#lastfm div#songinfo song name,
+div#lastfm div#userinfo duration note {
+  margin-right: 3px;
+}
+div#lastfm div#userinfo duration note {
+  font-weight: bold;
 }
 
 /* Big style */
@@ -251,7 +258,7 @@ div#lastfm.small div#userinfo {
 }
 div#lastfm.small div#userinfo duration::after, 
 div#lastfm.small div#userinfo playcount::after {
-  content: " •";
+  content: " • ";
 }
 div#lastfm.small div#userinfo a {
   color: grey;
