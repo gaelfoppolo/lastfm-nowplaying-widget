@@ -1,7 +1,14 @@
+/* 
+ * A Last.fm now playing widget
+ * (c) 2012 Callum Jones, 2015 Gaël Foppolo
+ * <cj@icj.me>, <me@gaelfoppolo.com>
+ */
+
 window.addEventListener("load", function(){
 
 	var color = "red";
-	var size = "small";
+	var size = "big";
+	var refreshInterval = 60000;
 
 	function createDOM() {
 
@@ -100,7 +107,8 @@ window.addEventListener("load", function(){
 		var data = JSON.parse(req.responseText);
 
 		var title = document.querySelector("titlebar");
-		title.innerHTML = is_too_long(data.title,30);
+		var titleToDisplay = (data.nowplaying ? 'En ce moment' : 'Il y a ' + data.date) + ' sur Last.fm';
+		title.innerHTML = is_too_long(titleToDisplay,30);
 		//artwork
 		var artwork = document.querySelector("#artwork");
 		artwork.src = data.image;
@@ -120,10 +128,11 @@ window.addEventListener("load", function(){
 		note.innerHTML = "&#9835;";
 		//playcount
 		var playcount = document.querySelector("playcount");
-		playcount.innerHTML = data.playcount;		
+		playcount.innerHTML = data.playcount + ((data.playcount<=1) ? " écoute" : " écoutes");		
 		//loved song
 		var loved = document.querySelector("loved");
-		loved.innerHTML = (typeof data.userloved != 'undefined') ? data.userloved : "";
+		//loved.innerHTML = (typeof data.userloved != 'undefined') ? data.userloved : "";
+		loved.innerHTML = data.userloved ? "&#x2764;" : "";
 		//username
 		var username = document.querySelector("user > a");
 		username.innerHTML = data.username;
@@ -154,6 +163,6 @@ window.addEventListener("load", function(){
 
 	requestData(updateNowPlaying);
 
-	setInterval(requestData,60000,updateNowPlaying);
+	setInterval(requestData,refreshInterval,updateNowPlaying);
 
 });

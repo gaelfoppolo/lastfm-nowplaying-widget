@@ -125,10 +125,9 @@ class LastFM_NowPlaying {
 		}
 		$track_arr = json_decode($track_json, true);
 		$track = $track + $track_arr['track'];
-		$track['playcount'] = isset($track['userplaycount']) ? ($track['userplaycount']) : "1";
-		$track['playcount'] .= ($track['playcount']=="1") ? " écoute" : " écoutes";
+		$track['playcount'] = isset($track['userplaycount']) ? intval($track['userplaycount']) : 1;
 		$track['duration'] = ($track['duration'] ? gmdate("i:s", ($track['duration'] / 1000)) : 'N/A');
-		$track['userloved'] = $track['userloved'] ? '&#x2764;' : null;
+		$track['userloved'] = $track['userloved'] ? true : false;
 		$toolongarr = array('artist', 'name', 'album');
 
 		foreach($track as $key => $value) {
@@ -148,9 +147,7 @@ class LastFM_NowPlaying {
 
 			$track['date'] = $this->formatDateDiff($dateFrom,$dateNow);
 
-		}
-
-		$track['title'] = ($track['nowplaying'] ? 'En ce moment' : 'Il y a '.$track['date']).' sur Last.fm';	
+		}	
 
 		$track['username'] = $this->username;
 
