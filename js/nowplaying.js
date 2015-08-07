@@ -6,8 +6,8 @@
 
 window.addEventListener("load", function(){
 
-	var color = "red";
-	var size = "big";
+	var color = "red"; // red or black
+	var size = "big"; // big or small
 	var refreshInterval = 60000;
 
 	function createDOM() {
