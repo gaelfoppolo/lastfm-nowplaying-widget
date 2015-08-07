@@ -65,4 +65,16 @@ var refreshInterval = 60000; // in milliseconds
 ```
 Recommended value for `refreshInterval` starts to **30000** (30 seconds).
 
+### Display ###
+
+To use it in your website, just add in the `<head>` of your HTML, these two lines:
+
+``` html
+<link rel="stylesheet" type="text/css" href="styles/last.fm.css">
+<script type="text/javascript" src="js/nowplaying.js"> </script>
+```
+and in the `<body>`, this line:
+``` html
+<div id="lastfm"></div>
+```
 **Alternatively, fork this repo and customise it to your liking! **
