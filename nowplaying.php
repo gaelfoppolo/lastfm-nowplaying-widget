@@ -1,5 +1,11 @@
 <?php
 
+/* 
+ * A Last.fm now playing widget
+ * (c) 2012 Callum Jones, 2015 Gaël Foppolo
+ * <cj@icj.me>, <me@gaelfoppolo.com>
+ */
+
 include __DIR__ . "/class/LastFM_NowPlaying.php";
 
 // Last.fm API UTC
@@ -7,12 +13,8 @@ date_default_timezone_set('UTC');
 
 // options to complete
 
-function getOptions(){
-
-}
-
-$api_key = "c3a41cdadfe269b2082b12eac19ec77f";
-$username = "iDrago";
+$api_key = "";
+$username = "";
 
 try {
 
@@ -22,7 +24,9 @@ try {
 	echo json_encode($track, JSON_PRETTY_PRINT);
 
 } catch (Exception $e) {
+
 	printf("%s", $e);
+
 }
 
 ?>
