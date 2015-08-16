@@ -92,7 +92,7 @@ class LastFM_NowPlaying {
 		$recent_tracks = json_decode($recent_tracks, true);
 
 		if(isset($recent_tracks["error"]) && ($recent_tracks["error"] == 10)) {
-			throw new exception("Unable to get data. Is your API key correct?");
+			throw new exception($recent_tracks["message"]);
 		}
 
 		// get the users top track's information from what we can
@@ -124,6 +124,11 @@ class LastFM_NowPlaying {
 			$track_json = $this->retrieveData($this->api_root . "?format=json&method=track.getInfo&username=" . $this->username . "&api_key=" . $this->api_key . "&artist=" . urlencode($track['artist']) . "&track=" . urlencode($track['name']) . "&autocorrect=1");
 		}
 		$track_arr = json_decode($track_json, true);
+
+		if(isset($track_arr["error"]) && ($track_arr["error"]["code"] == 10)) {
+			throw new exception($track_arr["error"]["message"]);
+		}
+
 		$track = $track + $track_arr['track'];
 		$track['playcount'] = isset($track['userplaycount']) ? intval($track['userplaycount']) : 1;
 		$track['duration'] = ($track['duration'] ? gmdate("i:s", ($track['duration'] / 1000)) : 'N/A');

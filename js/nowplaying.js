@@ -106,9 +106,15 @@ window.addEventListener("load", function(){
 
 		var data = JSON.parse(req.responseText);
 
+		
+
 		var title = document.querySelector("titlebar");
-		var titleToDisplay = (data.nowplaying ? 'En ce moment' : 'Il y a ' + data.date) + ' sur Last.fm';
+		var titleToDisplay = (data.erreur ? data.erreur : (data.nowplaying ? 'En ce moment' : 'Il y a ' + data.date) + ' sur Last.fm');
 		title.innerHTML = is_too_long(titleToDisplay,30);
+
+		if (typeof data.erreur != undefined) {
+			return;
+		}
 		//artwork
 		var artwork = document.querySelector("#artwork");
 		artwork.src = data.image;

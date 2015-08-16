@@ -20,13 +20,14 @@ try {
 
 	$nowplaying = new LastFM_NowPlaying($username,$api_key);
 	$track = $nowplaying->info();
-	header('Content-Type: text/plain; charset=utf-8');
-	echo json_encode($track, JSON_PRETTY_PRINT);
 
 } catch (Exception $e) {
 
-	printf("%s", $e);
+	$track["erreur"] = $e->getMessage();
 
 }
+
+	header('Content-Type: text/plain; charset=utf-8');
+	echo json_encode($track, JSON_PRETTY_PRINT);
 
 ?>
