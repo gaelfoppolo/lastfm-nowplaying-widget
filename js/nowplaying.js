@@ -104,15 +104,13 @@ window.addEventListener("load", function(){
 
 	function updateNowPlaying(req) {
 
-		var data = JSON.parse(req.responseText);
-
-		
+		var data = JSON.parse(req.responseText);		
 
 		var title = document.querySelector("titlebar");
 		var titleToDisplay = (data.erreur ? data.erreur : (data.nowplaying ? 'En ce moment' : 'Il y a ' + data.date) + ' sur Last.fm');
 		title.innerHTML = is_too_long(titleToDisplay,30);
 
-		if (typeof data.erreur != undefined) {
+		if (data.hasOwnProperty("erreur")) {
 			return;
 		}
 		//artwork

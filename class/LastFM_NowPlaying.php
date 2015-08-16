@@ -88,10 +88,12 @@ class LastFM_NowPlaying {
 	public function info() {
 
 		$recent_tracks = $this->retrieveData($this->api_root . "?format=json&method=user.getrecenttracks&user=" . $this->username . "&api_key=" . $this->api_key . "&limit=5");
-
+		
 		$recent_tracks = json_decode($recent_tracks, true);
 
-		if(isset($recent_tracks["error"]) && ($recent_tracks["error"] == 10)) {
+		if(empty($recent_tracks)) {
+			throw new exception("User recent tracks empty. API down? Check Last.fm API status.");
+		} else if(isset($recent_tracks["error"])) {
 			throw new exception($recent_tracks["message"]);
 		}
 
@@ -125,7 +127,14 @@ class LastFM_NowPlaying {
 		}
 		$track_arr = json_decode($track_json, true);
 
-		if(isset($track_arr["error"]) && ($track_arr["error"]["code"] == 10)) {
+		if(empty($track_arr) && $track['mbid']) {
+			$track_json = $this->retrieveData($this->api_root . "?format=json&method=track.getInfo&username=" . $this->username . "&api_key=" . $this->api_key . "&artist=" . urlencode($track['artist']) . "&track=" . urlencode($track['name']) . "&autocorrect=1");
+			$track_arr = json_decode($track_json, true);
+		}
+
+		if(empty($track_arr)) {
+			throw new exception("Track info empty. API down? Check Last.fm API status.");
+		} else if(isset($track_arr["error"])) {
 			throw new exception($track_arr["error"]["message"]);
 		}
 
