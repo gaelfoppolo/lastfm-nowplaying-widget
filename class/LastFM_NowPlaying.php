@@ -87,8 +87,8 @@ class LastFM_NowPlaying {
 
 	public function info() {
 
-		$recent_tracks = $this->retrieveData($this->api_root . "?format=json&method=user.getrecenttracks&user=" . $this->username . "&api_key=" . $this->api_key . "&limit=5");
-		
+		$recent_tracks = $this->retrieveData($this->api_root . "?format=json&method=user.getrecenttracks&user=" . $this->username . "&api_key=" . $this->api_key . "&limit=1");
+
 		$recent_tracks = json_decode($recent_tracks, true);
 
 		if(empty($recent_tracks)) {
@@ -135,7 +135,8 @@ class LastFM_NowPlaying {
 		if(empty($track_arr)) {
 			throw new exception("Track info empty. API down? Check Last.fm API status.");
 		} else if(isset($track_arr["error"])) {
-			throw new exception($track_arr["error"]["message"]);
+			if(isset($track_arr["error"]["message"])) throw new exception($track_arr["error"]["message"]);
+			else if (isset($track_arr["message"])) throw new exception($track_arr["message"]);			
 		}
 
 		$track = $track + $track_arr['track'];
