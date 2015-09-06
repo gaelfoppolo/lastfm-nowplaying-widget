@@ -127,22 +127,22 @@ class LastFM_NowPlaying {
 		}
 		$track_arr = json_decode($track_json, true);
 
-		if(empty($track_arr) && $track['mbid']) {
+		if((empty($track_arr) || isset($track_arr["error"])) && $track['mbid']) {
 			$track_json = $this->retrieveData($this->api_root . "?format=json&method=track.getInfo&username=" . $this->username . "&api_key=" . $this->api_key . "&artist=" . urlencode($track['artist']) . "&track=" . urlencode($track['name']) . "&autocorrect=1");
 			$track_arr = json_decode($track_json, true);
 		}
 
 		if(empty($track_arr)) {
 			throw new exception("Track info empty. API down? Check Last.fm API status.");
-		} else if(isset($track_arr["error"])) {
-			if(isset($track_arr["error"]["message"])) throw new exception($track_arr["error"]["message"]);
-			else if (isset($track_arr["message"])) throw new exception($track_arr["message"]);			
 		}
 
-		$track = $track + $track_arr['track'];
-		$track['playcount'] = isset($track['userplaycount']) ? intval($track['userplaycount']) : 1;
-		$track['duration'] = ($track['duration'] ? gmdate("i:s", ($track['duration'] / 1000)) : 'N/A');
-		$track['userloved'] = $track['userloved'] ? true : false;
+		if(isset($track_arr['track'])) {
+			$track += $track_arr['track'];
+		}
+
+		$track['playcount'] = isset($track['userplaycount']) ? intval($track['userplaycount']) : 'N/A';
+		$track['duration'] = isset($track['duration']) ? gmdate("i:s", ($track['duration'] / 1000)) : 'N/A';
+		$track['userloved'] = isset($track['userloved']) ? (($track['userloved'] == "1") ? true : false) : false;
 		$toolongarr = array('artist', 'name', 'album');
 
 		foreach($track as $key => $value) {
