@@ -140,7 +140,7 @@ class LastFM_NowPlaying {
 			$track += $track_arr['track'];
 		}
 
-		$track['playcount'] = isset($track['userplaycount']) ? intval($track['userplaycount']) : 'N/A';
+		$track['playcount'] = isset($track['userplaycount']) ? intval($track['userplaycount']) : 1;
 		$track['duration'] = isset($track['duration']) ? gmdate("i:s", ($track['duration'] / 1000)) : 'N/A';
 		$track['userloved'] = isset($track['userloved']) ? (($track['userloved'] == "1") ? true : false) : false;
 		$toolongarr = array('artist', 'name', 'album');
